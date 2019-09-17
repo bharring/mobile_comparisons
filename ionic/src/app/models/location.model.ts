@@ -1,4 +1,5 @@
 import { Base } from '.';
+import { firestore } from 'firebase/app';
 
 export interface Location extends Base {
   userId: string;
@@ -9,7 +10,7 @@ export interface Location extends Base {
   region: string;
   country: string;
   postal: string;
-  geoPoint: firebase.firestore.GeoPoint; // location during recording
+  geoPoint: firestore.GeoPoint; // location during recording
 }
 
 /**

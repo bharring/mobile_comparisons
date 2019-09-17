@@ -12,7 +12,7 @@ export function createInitialState(): SignUpState {
   };
 }
 
-@StoreConfig({ name: 'sign-up' })
+@StoreConfig({ name: 'sign-up', idKey: 'docId' })
 export class SignUpStore extends Store<SignUpState> {
   constructor() {
     super(createInitialState());

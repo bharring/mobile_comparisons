@@ -1,8 +1,8 @@
 import { Base } from '.';
 
 export interface User extends Base {
-  firstName: string;
-  lastName: string;
+  displayName: string;
+  photoURL: string;
   organization: string;
 }
 
