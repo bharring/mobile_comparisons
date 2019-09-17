@@ -1,0 +1,7 @@
+{
+  "appId": "com.tapigo.curb_ionic",
+  "appName": "Curb Ionic",
+  "bundledWebRuntime": false,
+  "npmClient": "npm",
+  "webDir": "www"
+}

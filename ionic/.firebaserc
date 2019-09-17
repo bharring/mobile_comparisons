@@ -1,0 +1,11 @@
+{
+  "targets": {
+    "curb-7feec": {
+      "hosting": {
+        "app": [
+          "curb-7feec"
+        ]
+      }
+    }
+  }
+}
