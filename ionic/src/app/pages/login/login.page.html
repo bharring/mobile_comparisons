@@ -1,0 +1,43 @@
+<ion-header>
+  <ion-toolbar>
+    <ion-buttons slot="start">
+      <ion-menu-button></ion-menu-button>
+    </ion-buttons>
+    <ion-title>
+      Login
+    </ion-title>
+  </ion-toolbar>
+</ion-header>
+
+<ion-content>
+  <ion-card>
+    <ion-card-content>
+      <form [formGroup]="form" (ngSubmit)="login()">
+        <ion-item>
+          <ion-label position="stacked">Email</ion-label>
+          <ion-input type="text" formControlName="email"></ion-input>
+        </ion-item>
+        <ion-item>
+          <ion-label position="stacked">Password</ion-label>
+          <ion-input type="password" formControlName="password"></ion-input>
+        </ion-item>
+        <ion-col>
+          <div class="ion-text-center">
+            <button type="submit" style="display:none">hidden submit</button>
+            <ion-button expand="full" [disabled]="!form.valid" type="submit">
+              <ion-spinner *ngIf="loading"></ion-spinner>
+              <div *ngIf="!loading">
+                Login
+              </div>
+            </ion-button>
+            <br>
+            <a [routerLink]="['/sign-up']">Sign Up Here</a>
+          </div>
+        </ion-col>
+        <ion-text color="danger" *ngIf="error">
+          <p>{{ error }}</p>
+        </ion-text>
+      </form>
+    </ion-card-content>
+  </ion-card>
+</ion-content>
