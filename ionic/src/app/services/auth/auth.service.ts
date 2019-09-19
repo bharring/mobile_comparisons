@@ -1,8 +1,8 @@
 import { Injectable } from '@angular/core';
-import { CollectionConfig, FireAuthService, AtomicWrite } from 'akita-ng-fire';
+import { CollectionConfig, FireAuthService } from 'akita-ng-fire';
 import { AuthState, AuthStore } from './auth.state';
 import { map, distinctUntilChanged, skip } from 'rxjs/operators';
-import { firestore, User } from 'firebase/app';
+import { firestore } from 'firebase/app';
 import { Router } from '@angular/router';
 
 @Injectable({ providedIn: 'root' })
@@ -17,13 +17,12 @@ export class AuthService extends FireAuthService<AuthState> {
         distinctUntilChanged(),
         skip(1),
       )
-      .subscribe(async (loggedIn) => {
+      .subscribe(async loggedIn => {
         if (loggedIn) {
           await this.router.navigateByUrl('/');
         } else {
           await this.router.navigateByUrl('/login');
         }
-        console.log(loggedIn);
       });
   }
 

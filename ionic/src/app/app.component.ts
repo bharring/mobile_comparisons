@@ -15,7 +15,7 @@ export class AppComponent {
   public appPages = [
     {
       title: 'Home',
-      action: async () => await this.router.navigateByUrl('/home'),
+      action: async () => await this.router.navigateByUrl('/'),
       icon: 'home',
       loggedIn: true,
     },
