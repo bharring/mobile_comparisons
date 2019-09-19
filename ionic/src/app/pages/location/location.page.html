@@ -23,6 +23,39 @@
     <ion-spinner class="center-item"></ion-spinner>
   </ng-container>
   <ng-template #loaded>
-    <pre *ngIf="location$ | async as location">{{ location | json }}</pre>
+    <ng-container *ngIf="location$ | async as location">
+      <ion-row>
+        <ion-col>
+          <ion-text>
+            {{ location.address1 }}<br />
+          </ion-text>
+          <ion-text *ngIf="location.address2">
+            {{ location.address2 }}<br />
+          </ion-text>
+          <ion-text>
+            {{ location.city }}, {{ location.region }} {{ location.postal }}<br />
+            {{ location.country }}
+          </ion-text>
+        </ion-col>
+      </ion-row>
+      <ion-row>
+        <ion-col>
+          <ion-button expand="block" color="secondary" (click)="addNote()">
+            <ion-icon name="document"></ion-icon>&nbsp;&nbsp;Add Note
+          </ion-button>
+        </ion-col>
+        <ion-col>
+          <ion-button expand="block" color="secondary" (click)="addPhoto()">
+            <ion-icon name="camera"></ion-icon>&nbsp;&nbsp;Add Photo
+          </ion-button>
+        </ion-col>
+        <ion-col>
+          <ion-button expand="block" color="secondary" (click)="addAudio()">
+            <ion-icon name="mic"></ion-icon>&nbsp;&nbsp;Add Audio
+          </ion-button>
+        </ion-col>
+      </ion-row>
+      <!-- <pre *ngIf="location$ | async as location">{{ location | json }}</pre> -->
+    </ng-container>
   </ng-template>
 </ion-content>

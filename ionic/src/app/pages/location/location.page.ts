@@ -27,9 +27,9 @@ export class LocationPage implements OnInit, OnDestroy, AfterViewInit {
     private geo: GeoService,
     private modal: ModalController,
     private query: LocationsQuery,
+    private service: LocationService,
     private route: ActivatedRoute,
     private router: Router,
-    private service: LocationService,
   ) {}
 
   async ngOnInit() {
@@ -60,6 +60,10 @@ export class LocationPage implements OnInit, OnDestroy, AfterViewInit {
     this.service.store.removeActive(this.route.snapshot.params.id);
     this.sub.unsubscribe();
   }
+
+  addNote() {}
+  addPhoto() {}
+  addAudio() {}
 
   async edit() {
     const modal = await this.modal.create({
