@@ -3,11 +3,11 @@ import { Asset } from '../../models';
 
 import { Injectable } from '@angular/core';
 
-export interface AssetsState extends EntityState<Asset> {}
+export interface AssetState extends EntityState<Asset> {}
 
 @Injectable({ providedIn: 'root' })
-@StoreConfig({ name: 'assets' })
-export class AssetsStore extends EntityStore<AssetsState, Asset> {
+@StoreConfig({ name: 'assets', idKey: 'docId' })
+export class AssetStore extends EntityStore<AssetState, Asset> {
   constructor() {
     super();
   }
