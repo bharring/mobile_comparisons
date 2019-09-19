@@ -69,6 +69,7 @@
     "use-lifecycle-interface": true,
     "use-pipe-transform-interface": true,
     "one-variable-per-declaration": false,
+    "variable-name": false,
     "component-class-suffix": [true, "Page", "Component"],
     "directive-class-suffix": true,
     "directive-selector": [

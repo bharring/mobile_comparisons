@@ -10,14 +10,16 @@ import { Location } from 'src/app/models';
   styleUrls: ['home.page.scss'],
 })
 export class HomePage implements OnInit, OnDestroy {
-  private sub: Subscription;
+  loading$: Observable<boolean>;
   locations$: Observable<Location[]>;
+  private sub: Subscription;
 
   constructor(private service: LocationService, private query: LocationsQuery) {}
 
   ngOnInit(): void {
-    this.sub = this.service.syncCollection().subscribe();
+    this.loading$ = this.query.selectLoading();
     this.locations$ = this.query.selectAll();
+    this.sub = this.service.syncCollection().subscribe();
   }
 
   ngOnDestroy(): void {

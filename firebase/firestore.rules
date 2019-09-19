@@ -4,10 +4,21 @@ service cloud.firestore {
     match /users/{userId} {
       allow read, write: if request.auth.uid == userId;
     }
-    match /locations/{locationId} {
-      allow create: if request.auth.uid != null && request.auth.uid == request.resource.data.userId;
-      allow update: if request.auth.uid == get(/databases/$(database)/documents/locations/$(locationId)).data.userId && request.resource.data.userId == request.auth.uid;
-      allow read, delete: if request.auth.uid == get(/databases/$(database)/documents/locations/$(locationId)).data.userId;
+    
+    match /locations/{document=**} {
+      allow create: 
+        if request.auth.uid != null &&
+           request.auth.uid == request.resource.data.userId;
+      allow update, read, delete: 
+        if request.auth.uid == resource.data.userId;
+    }
+    
+    match /assets/{document=**} {
+      allow create:
+        if request.auth.uid != null &&
+           request.auth.uid == request.resource.data.userId;
+      allow update, read, delete:
+        if request.auth.uid == resource.data.userId;
     }
   }
 }

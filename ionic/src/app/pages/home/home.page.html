@@ -10,9 +10,14 @@
 </ion-header>
 
 <ion-content>
-  <ion-list>
-    <ion-item *ngFor="let location of locations$ | async">
-      <ion-label>{{ location.name }}</ion-label>
-    </ion-item>
-  </ion-list>
+  <ng-container *ngIf="loading$ | async; else loaded">
+    <ion-spinner class="center-item"></ion-spinner>
+  </ng-container>
+  <ng-template #loaded>
+    <ion-list>
+      <ion-item *ngFor="let location of locations$ | async">
+        <ion-label>{{ location.name }}</ion-label>
+      </ion-item>
+    </ion-list>
+  </ng-template>
 </ion-content>
