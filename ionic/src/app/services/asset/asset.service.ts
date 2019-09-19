@@ -12,7 +12,9 @@ export class AssetService extends CollectionService<AssetState> {
     super(store);
   }
 
-  syncCollection() {
-    return super.syncCollection(ref => ref.where('userId', '==', this.auth.user.uid));
+  syncCollection(locationId: string) {
+    return super.syncCollection(ref =>
+      ref.where('userId', '==', this.auth.user.uid).where('locationId', '==', locationId),
+    );
   }
 }

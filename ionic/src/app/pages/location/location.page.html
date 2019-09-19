@@ -56,6 +56,12 @@
         </ion-col>
       </ion-row>
       <!-- <pre *ngIf="location$ | async as location">{{ location | json }}</pre> -->
+      <ion-list>
+        <ion-list-header>Assets</ion-list-header>
+        <ion-item *ngFor="let asset of assets$ | async">
+          <ion-label>{{ asset.path }}</ion-label>
+        </ion-item>
+      </ion-list>
     </ng-container>
   </ng-template>
 </ion-content>

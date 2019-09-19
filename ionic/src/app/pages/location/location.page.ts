@@ -2,12 +2,14 @@ import { Component, OnInit, OnDestroy, ViewChild, ElementRef, AfterViewInit } fr
 import { ActivatedRoute, Router } from '@angular/router';
 import { LocationsQuery } from 'src/app/services/location/location.query';
 import { LocationService } from 'src/app/services/location/location.service';
-import { Location } from 'src/app/models';
+import { Location, Asset } from 'src/app/models';
 import { Observable, Subscription } from 'rxjs';
 import { ModalController, AlertController } from '@ionic/angular';
 import { EditLocationComponent } from 'src/app/shared/edit-location/edit-location.component';
 import { GeoService } from 'src/app/services/geo.service';
-import { map, filter } from 'rxjs/operators';
+import { filter, take } from 'rxjs/operators';
+import { AssetsQuery } from 'src/app/services/asset/asset.query';
+import { AssetService } from 'src/app/services/asset/asset.service';
 
 @Component({
   selector: 'app-location',
@@ -17,26 +19,34 @@ import { map, filter } from 'rxjs/operators';
 export class LocationPage implements OnInit, OnDestroy, AfterViewInit {
   loading$: Observable<boolean>;
   location$: Observable<Location>;
-  private sub: Subscription;
+  assets$: Observable<Asset[]>;
+  private locationSubscription: Subscription;
+  private assetSubscription: Subscription;
 
   @ViewChild('mapCanvas', { static: false }) mapElement: ElementRef;
   googleMap: any;
 
   constructor(
+    private assetsQuery: AssetsQuery,
+    private assetService: AssetService,
     private alert: AlertController,
     private geo: GeoService,
     private modal: ModalController,
-    private query: LocationsQuery,
-    private service: LocationService,
+    private locationsQuery: LocationsQuery,
+    private locationService: LocationService,
     private route: ActivatedRoute,
     private router: Router,
   ) {}
 
   async ngOnInit() {
-    this.loading$ = this.query.selectLoading();
-    this.sub = this.service.syncCollection().subscribe();
-    this.service.store.setActive(this.route.snapshot.params.id);
-    this.location$ = this.query.selectActive() as Observable<Location>;
+    this.loading$ = this.locationsQuery.selectLoading();
+    this.locationSubscription = this.locationService.syncCollection().subscribe();
+
+    this.assetSubscription = this.assetService.syncCollection(this.route.snapshot.params.id).subscribe();
+    this.assets$ = this.assetsQuery.selectAll();
+
+    this.locationService.store.setActive(this.route.snapshot.params.id);
+    this.location$ = this.locationsQuery.selectActive() as Observable<Location>;
   }
 
   ngAfterViewInit() {
@@ -45,6 +55,7 @@ export class LocationPage implements OnInit, OnDestroy, AfterViewInit {
         filter(location => !!location),
         filter(location => !!location.geoPoint),
         filter(_ => !this.googleMap), // don't redraw map
+        take(1),
       )
       .subscribe(async location => {
         const mapsApi = await this.geo.getGoogleMaps();
@@ -57,8 +68,9 @@ export class LocationPage implements OnInit, OnDestroy, AfterViewInit {
   }
 
   ngOnDestroy() {
-    this.service.store.removeActive(this.route.snapshot.params.id);
-    this.sub.unsubscribe();
+    this.locationService.store.removeActive(this.route.snapshot.params.id);
+    this.assetSubscription.unsubscribe();
+    this.locationSubscription.unsubscribe();
   }
 
   addNote() {}
@@ -69,7 +81,7 @@ export class LocationPage implements OnInit, OnDestroy, AfterViewInit {
     const modal = await this.modal.create({
       component: EditLocationComponent,
       componentProps: {
-        location: this.query.getActive(),
+        location: this.locationsQuery.getActive(),
       },
     });
     await modal.present();
@@ -83,7 +95,7 @@ export class LocationPage implements OnInit, OnDestroy, AfterViewInit {
           text: 'Yes',
           handler: async () => {
             await this.router.navigateByUrl('/home');
-            await this.service.remove(this.route.snapshot.params.id);
+            await this.locationService.remove(this.route.snapshot.params.id);
           },
         },
         { text: 'Cancel', role: 'cancel' },
