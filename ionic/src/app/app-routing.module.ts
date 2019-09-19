@@ -5,8 +5,10 @@ import { LoginGuard } from './guards/login.guard';
 
 const routes: Routes = [
   {
-    path: '',
-    pathMatch: 'full',
+    path: '', pathMatch: 'full', redirectTo: 'home'
+  },
+  {
+    path: 'home',
     canActivate: [AuthGuard],
     loadChildren: () => import('./pages/home/home.module').then(m => m.HomePageModule),
   },
@@ -24,6 +26,11 @@ const routes: Routes = [
     path: 'profile',
     canActivate: [AuthGuard],
     loadChildren: () => import('./pages/profile/profile.module').then(m => m.ProfilePageModule),
+  },
+  {
+    path: 'location',
+    canActivate: [AuthGuard],
+    loadChildren: () => import('./pages/location/location.module').then(m => m.LocationPageModule),
   },
 ];
 

@@ -1,0 +1,28 @@
+<ion-header>
+  <ion-toolbar>
+    <ion-buttons slot="start">
+      <ion-back-button defaultHref="home"></ion-back-button>
+    </ion-buttons>
+    <ion-title *ngIf="location$ | async as location">{{ location.name }}</ion-title>
+    <ion-buttons slot="end">
+      <ion-button (click)="edit()">
+        <ion-icon name="create"></ion-icon>
+      </ion-button>
+      <ion-button color="danger" (click)="delete()">
+        <ion-icon name="trash"></ion-icon>
+      </ion-button>
+    </ion-buttons>
+  </ion-toolbar>
+</ion-header>
+
+<ion-content>
+  <div [hidden]="!googleMap" #mapContainer class="map">
+    <div #mapCanvas class="map-canvas"></div>
+  </div>
+  <ng-container *ngIf="loading$ | async; else loaded">
+    <ion-spinner class="center-item"></ion-spinner>
+  </ng-container>
+  <ng-template #loaded>
+    <pre *ngIf="location$ | async as location">{{ location | json }}</pre>
+  </ng-template>
+</ion-content>

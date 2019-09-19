@@ -3,6 +3,8 @@ import { LocationService } from 'src/app/services/location/location.service';
 import { LocationsQuery } from 'src/app/services/location/location.query';
 import { Subscription, Observable } from 'rxjs';
 import { Location } from 'src/app/models';
+import { ModalController } from '@ionic/angular';
+import { EditLocationComponent } from 'src/app/shared/edit-location/edit-location.component';
 
 @Component({
   selector: 'app-home',
@@ -14,7 +16,7 @@ export class HomePage implements OnInit, OnDestroy {
   locations$: Observable<Location[]>;
   private sub: Subscription;
 
-  constructor(private service: LocationService, private query: LocationsQuery) {}
+  constructor(private service: LocationService, private query: LocationsQuery, private modal: ModalController) {}
 
   ngOnInit(): void {
     this.loading$ = this.query.selectLoading();
@@ -26,7 +28,10 @@ export class HomePage implements OnInit, OnDestroy {
     this.sub.unsubscribe();
   }
 
-  add() {
-    // this.service.add({  });
+  async addLocation() {
+    const modal = await this.modal.create({
+      component: EditLocationComponent,
+    });
+    await modal.present();
   }
 }

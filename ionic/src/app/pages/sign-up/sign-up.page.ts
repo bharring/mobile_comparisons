@@ -13,7 +13,7 @@ export class SignUpPage implements OnInit {
   error: string;
   loading = false;
 
-  constructor(private auth: AuthService, private fb: FormBuilder, private router: Router) {}
+  constructor(private auth: AuthService, private fb: FormBuilder) {}
 
   ngOnInit() {
     this.form = this.fb.group(
