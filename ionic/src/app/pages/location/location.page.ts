@@ -6,7 +6,7 @@ import { Location, Asset } from 'src/app/models';
 import { Observable, Subscription } from 'rxjs';
 import { ModalController, AlertController } from '@ionic/angular';
 import { GeoService } from 'src/app/services/geo.service';
-import { filter, take } from 'rxjs/operators';
+import { filter, take, finalize } from 'rxjs/operators';
 import { AssetsQuery } from 'src/app/services/asset/asset.query';
 import { AssetService } from 'src/app/services/asset/asset.service';
 import { AddAudioComponent } from './add-audio/add-audio.component';
@@ -15,6 +15,8 @@ import { StorageService } from 'src/app/services/storage.service';
 import { EditNoteComponent } from './edit-note/edit-note.component';
 import { EditLocationComponent } from '../../shared/edit-location/edit-location.component';
 import * as firebase from 'firebase/app';
+import { AuthService } from 'src/app/services/auth/auth.service';
+import { EditPhotoComponent } from './edit-photo/edit-photo.component';
 
 @Component({
   selector: 'app-location',
@@ -32,6 +34,7 @@ export class LocationPage implements OnInit, OnDestroy, AfterViewInit {
   googleMap: any;
 
   constructor(
+    private auth: AuthService,
     private assetsQuery: AssetsQuery,
     private assetService: AssetService,
     private alert: AlertController,
@@ -92,9 +95,31 @@ export class LocationPage implements OnInit, OnDestroy, AfterViewInit {
     });
     await modal.present();
   }
+  async editPhoto(photo?: Asset) {
+    const modal = await this.modal.create({
+      component: EditPhotoComponent,
+      componentProps: {
+        locationId: this.route.snapshot.params.id,
+        photo,
+      },
+    });
+    await modal.present();
+  }
   async addPhoto() {
-    const url = await this.camera.takePicture();
-    this.storage.upload(`/locations/${Date.now()}`, url);
+    const image = await this.camera.takePicture();
+    const path = `/users/${this.auth.user.uid}/locations/${this.route.snapshot.params.id}/${Date.now()}.jpeg`;
+    const percentageChanges = this.storage.upload(path, image.base64String);
+    percentageChanges
+      .pipe(
+        finalize(async () => {
+          const url = await this.storage
+            .getDownloadURL(path)
+            .pipe(take(1))
+            .toPromise();
+          this.assetService.addAsset({ type: `image/${image.format}`, url, path, locationId: this.route.snapshot.params.id });
+        }),
+      )
+      .subscribe();
   }
   async addAudio() {
     const modal = await this.modal.create({
@@ -125,6 +150,7 @@ export class LocationPage implements OnInit, OnDestroy, AfterViewInit {
           handler: async () => {
             await this.router.navigateByUrl('/home');
             await this.locationService.remove(this.route.snapshot.params.id, {});
+            await this.assetService.removeAssetsForLocation(this.assets$);
           },
         },
         { text: 'Cancel', role: 'cancel' },

@@ -12,6 +12,7 @@ import { EditNoteComponent } from './edit-note/edit-note.component';
 import { AudioCardComponent } from './audio-card/audio-card.component';
 import { NoteCardComponent } from './note-card/note-card.component';
 import { PhotoCardComponent } from './photo-card/photo-card.component';
+import { EditPhotoComponent } from './edit-photo/edit-photo.component';
 
 const routes: Routes = [
   {
@@ -26,6 +27,7 @@ const routes: Routes = [
     LocationPage,
     AddAudioComponent,
     EditNoteComponent,
+    EditPhotoComponent,
     AudioCardComponent,
     NoteCardComponent,
     PhotoCardComponent,
@@ -33,6 +35,7 @@ const routes: Routes = [
   entryComponents: [
     AddAudioComponent,
     EditNoteComponent,
+    EditPhotoComponent,
     AudioCardComponent,
     NoteCardComponent,
     PhotoCardComponent,

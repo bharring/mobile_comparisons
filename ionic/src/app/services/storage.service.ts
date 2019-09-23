@@ -1,6 +1,7 @@
 import { Injectable } from '@angular/core';
 import { AngularFireStorage } from '@angular/fire/storage';
 import { Observable } from 'rxjs';
+import { take } from 'rxjs/operators';
 
 @Injectable({
   providedIn: 'root',
@@ -18,13 +19,18 @@ export class StorageService {
     return ref.getDownloadURL();
   }
 
-  upload(path: string, data: any): Observable<number> {
-    const task = this.storage.upload(path, data);
+  upload(path: string, data: string): Observable<number> {
+    const ref = this.storage.ref(path);
+    const task = ref.putString(data, 'base64', { contentType: 'image/jpeg' });
     task.snapshotChanges().subscribe();
     return task.percentageChanges();
   }
 
   delete(path: string) {
-    this.storage.ref(path).delete().subscribe();
+    return this.storage
+      .ref(path)
+      .delete()
+      .pipe(take(1))
+      .toPromise();
   }
 }

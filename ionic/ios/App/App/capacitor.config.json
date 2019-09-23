@@ -3,5 +3,6 @@
   "appName": "Curb Ionic",
   "bundledWebRuntime": false,
   "npmClient": "npm",
-  "webDir": "www"
+  "webDir": "www",
+  "url": "https://localhost:8100/"
 }

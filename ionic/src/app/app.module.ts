@@ -18,6 +18,7 @@ import { AngularFireAuthModule } from '@angular/fire/auth';
 import { AkitaNgDevtools } from '@datorama/akita-ngdevtools';
 import { AkitaNgRouterStoreModule } from '@datorama/akita-ng-router-store';
 import { DistancePipe } from './pipes/distance.pipe';
+import { Capacitor } from '@capacitor/core';
 
 @NgModule({
   declarations: [AppComponent, DistancePipe],

@@ -62,6 +62,7 @@
       <ion-label class="ion-padding">Assets</ion-label>
       <div *ngFor="let asset of assets$ | async">
         <app-note-card *ngIf="asset.type === 'note'" [note]="asset" (click)="editNote(asset)"></app-note-card>
+        <app-photo-card *ngIf="asset.type === 'image/jpeg'" [photo]="asset" (click)="editPhoto(asset)"></app-photo-card>
       </div>
 
     </ng-container>

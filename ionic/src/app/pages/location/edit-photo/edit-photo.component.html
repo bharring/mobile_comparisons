@@ -1,0 +1,22 @@
+<ion-header>
+  <ion-toolbar>
+    <ion-buttons slot="start">
+      <ion-button (click)="cancel()">
+        <ion-icon name="close"></ion-icon>
+      </ion-button>
+    </ion-buttons>
+    <ion-title>
+      {{ 'Edit photo' }}
+    </ion-title>
+    <ion-buttons slot="end">
+      <ion-button color="danger" (click)="delete()">
+        <ion-icon name="trash"></ion-icon>
+      </ion-button>
+
+    </ion-buttons>
+  </ion-toolbar>
+</ion-header>
+
+<ion-content>
+  <ion-img [src]="photo.url"></ion-img>
+</ion-content>

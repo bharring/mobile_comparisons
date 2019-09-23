@@ -6,13 +6,11 @@ export interface Asset extends Base {
   locationId: string;
   type: string; // MIME type
   path: string; // storage path
+  url: string; // download path
   geoPoint: firestore.GeoPoint; // location during recording
-  // EXIF and similar data:
 
-  // test notes only:
-  subject: string;
-  text: string;
-
+  subject?: string; // test notes only:
+  text?: string; // test notes only:
 }
 
 /**
