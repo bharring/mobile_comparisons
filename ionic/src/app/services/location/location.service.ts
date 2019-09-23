@@ -20,8 +20,4 @@ export class LocationService extends CollectionService<LocationState> {
   updateLocation(entity: Partial<Location>) {
     return this.update({ ...entity, updatedAt: new Date() });
   }
-
-  syncLocationCollection() {
-    return super.syncCollection(ref => ref.where('userId', '==', this.auth.user.uid));
-  }
 }

@@ -9,6 +9,7 @@ import { Router } from '@angular/router';
 @CollectionConfig({ path: 'users' })
 export class AuthService extends FireAuthService<AuthState> {
   public loggedIn$ = this.fireAuth.user.pipe(map(u => !!u));
+  public user$ = this.fireAuth.user;
 
   constructor(store: AuthStore, private router: Router) {
     super(store);

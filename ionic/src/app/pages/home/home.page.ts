@@ -1,7 +1,6 @@
-import { Component, OnInit, OnDestroy } from '@angular/core';
-import { LocationService } from 'src/app/services/location/location.service';
+import { Component, OnInit } from '@angular/core';
 import { LocationsQuery } from 'src/app/services/location/location.query';
-import { Subscription, Observable } from 'rxjs';
+import { Observable } from 'rxjs';
 import { Location } from 'src/app/models';
 import { ModalController } from '@ionic/angular';
 import { EditLocationComponent } from '../../shared/edit-location/edit-location.component';
@@ -11,21 +10,15 @@ import { EditLocationComponent } from '../../shared/edit-location/edit-location.
   templateUrl: 'home.page.html',
   styleUrls: ['home.page.scss'],
 })
-export class HomePage implements OnInit, OnDestroy {
+export class HomePage implements OnInit {
   loading$: Observable<boolean>;
   locations$: Observable<Location[]>;
-  private sub: Subscription;
 
-  constructor(private service: LocationService, private query: LocationsQuery, private modal: ModalController) {}
+  constructor(private query: LocationsQuery, private modal: ModalController) {}
 
   ngOnInit(): void {
     this.loading$ = this.query.selectLoading();
     this.locations$ = this.query.selectAll();
-    this.sub = this.service.syncLocationCollection().subscribe();
-  }
-
-  ngOnDestroy(): void {
-    this.sub.unsubscribe();
   }
 
   async addLocation() {

@@ -2,14 +2,20 @@ import { NgModule } from '@angular/core';
 import { PreloadAllModules, RouterModule, Routes } from '@angular/router';
 import { AuthGuard } from './guards/auth.guard';
 import { LoginGuard } from './guards/login.guard';
+import { LocationListGuard } from './guards/location-list.guard';
+import { ActiveLocationGuard } from './guards/active-location.guard';
+import { AssetListGuard as ActiveAssetGuard } from './guards/asset-list.guard';
 
 const routes: Routes = [
   {
-    path: '', pathMatch: 'full', redirectTo: 'home'
+    path: '',
+    pathMatch: 'full',
+    redirectTo: 'home',
   },
   {
     path: 'home',
-    canActivate: [AuthGuard],
+    canActivate: [AuthGuard, LocationListGuard],
+    canDeactivate: [LocationListGuard],
     loadChildren: () => import('./pages/home/home.module').then(m => m.HomePageModule),
   },
   {
@@ -29,7 +35,8 @@ const routes: Routes = [
   },
   {
     path: 'location',
-    canActivate: [AuthGuard],
+    canActivate: [AuthGuard, ActiveLocationGuard, ActiveAssetGuard],
+    canDeactivate: [ActiveLocationGuard, ActiveAssetGuard],
     loadChildren: () => import('./pages/location/location.module').then(m => m.LocationPageModule),
   },
 ];

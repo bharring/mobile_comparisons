@@ -1,9 +1,9 @@
-import { Component, OnInit, OnDestroy, ViewChild, ElementRef, AfterViewInit } from '@angular/core';
+import { Component, OnInit, ViewChild, ElementRef, AfterViewInit } from '@angular/core';
 import { ActivatedRoute, Router } from '@angular/router';
 import { LocationsQuery } from 'src/app/services/location/location.query';
 import { LocationService } from 'src/app/services/location/location.service';
 import { Location, Asset } from 'src/app/models';
-import { Observable, Subscription } from 'rxjs';
+import { Observable } from 'rxjs';
 import { ModalController, AlertController } from '@ionic/angular';
 import { GeoService } from 'src/app/services/geo.service';
 import { filter, take, finalize } from 'rxjs/operators';
@@ -14,7 +14,6 @@ import { CameraService } from 'src/app/services/camera.service';
 import { StorageService } from 'src/app/services/storage.service';
 import { EditNoteComponent } from './edit-note/edit-note.component';
 import { EditLocationComponent } from '../../shared/edit-location/edit-location.component';
-import * as firebase from 'firebase/app';
 import { AuthService } from 'src/app/services/auth/auth.service';
 import { EditPhotoComponent } from './edit-photo/edit-photo.component';
 
@@ -23,12 +22,10 @@ import { EditPhotoComponent } from './edit-photo/edit-photo.component';
   templateUrl: './location.page.html',
   styleUrls: ['./location.page.scss'],
 })
-export class LocationPage implements OnInit, OnDestroy, AfterViewInit {
+export class LocationPage implements OnInit, AfterViewInit {
   loading$: Observable<boolean>;
   location$: Observable<Location>;
   assets$: Observable<Asset[]>;
-  private locationSubscription: Subscription;
-  private assetSubscription: Subscription;
 
   @ViewChild('mapCanvas', { static: false }) mapElement: ElementRef;
   googleMap: any;
@@ -50,14 +47,7 @@ export class LocationPage implements OnInit, OnDestroy, AfterViewInit {
 
   async ngOnInit() {
     this.loading$ = this.locationsQuery.selectLoading();
-    this.locationSubscription = this.locationService.syncLocationCollection().subscribe();
-
-    this.assetSubscription = this.assetService.syncAssetCollection().subscribe();
-    this.assets$ = this.assetsQuery.selectAll({
-      filterBy: entity => entity.locationId === this.route.snapshot.params.id,
-    });
-
-    this.locationService.store.setActive(this.route.snapshot.params.id);
+    this.assets$ = this.assetsQuery.selectAll();
     this.location$ = this.locationsQuery.selectActive() as Observable<Location>;
   }
 
@@ -75,14 +65,9 @@ export class LocationPage implements OnInit, OnDestroy, AfterViewInit {
           const position = new mapsApi.LatLng(location.geoPoint.latitude, location.geoPoint.longitude);
           this.googleMap = new mapsApi.Map(this.mapElement.nativeElement, { center: position, zoom: 17 });
           const marker = new mapsApi.Marker({ position, map: this.googleMap });
+          // TODO add markers for other assets
         }
       });
-  }
-
-  ngOnDestroy() {
-    // this.locationService.store.removeActive(this.route.snapshot.params.id);
-    this.assetSubscription.unsubscribe();
-    this.locationSubscription.unsubscribe();
   }
 
   async editNote(note?: Asset) {
@@ -116,7 +101,12 @@ export class LocationPage implements OnInit, OnDestroy, AfterViewInit {
             .getDownloadURL(path)
             .pipe(take(1))
             .toPromise();
-          this.assetService.addAsset({ type: `image/${image.format}`, url, path, locationId: this.route.snapshot.params.id });
+          this.assetService.addAsset({
+            type: `image/${image.format}`,
+            url,
+            path,
+            locationId: this.route.snapshot.params.id,
+          });
         }),
       )
       .subscribe();

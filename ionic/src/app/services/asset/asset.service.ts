@@ -1,5 +1,5 @@
 import { Injectable } from '@angular/core';
-import { CollectionConfig, CollectionService } from 'akita-ng-fire';
+import { CollectionConfig, CollectionService, WriteOptions } from 'akita-ng-fire';
 import { AssetState, AssetStore } from './asset.store';
 import { AuthService } from '../auth/auth.service';
 import { Asset } from 'src/app/models';
@@ -47,9 +47,5 @@ export class AssetService extends CollectionService<AssetState> {
 
   async updateAsset(entity: Partial<Asset>) {
     return await this.update({ ...entity, updatedAt: new Date() });
-  }
-
-  syncAssetCollection() {
-    return super.syncCollection(ref => ref.where('userId', '==', this.auth.user.uid));
   }
 }
