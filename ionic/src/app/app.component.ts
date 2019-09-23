@@ -5,6 +5,7 @@ import { SplashScreen } from '@ionic-native/splash-screen/ngx';
 import { StatusBar } from '@ionic-native/status-bar/ngx';
 import { AuthService } from './services/auth/auth.service';
 import { Router } from '@angular/router';
+import { GeoService } from './services/geo.service';
 
 @Component({
   selector: 'app-root',
@@ -47,6 +48,7 @@ export class AppComponent {
 
   constructor(
     public auth: AuthService,
+    public geo: GeoService,
     private platform: Platform,
     private router: Router,
     private splashScreen: SplashScreen,
@@ -56,9 +58,10 @@ export class AppComponent {
   }
 
   initializeApp() {
-    this.platform.ready().then(() => {
+    this.platform.ready().then(async () => {
       this.statusBar.styleDefault();
       this.splashScreen.hide();
+      await this.geo.getGoogleMaps();
     });
   }
 }

@@ -1,3 +1,38 @@
-<p>
-  edit-note works!
-</p>
+<ion-header>
+  <ion-toolbar>
+    <ion-title>
+      {{ note ? note.subject : 'Add Note' }}
+    </ion-title>
+    <ion-buttons slot="end">
+      <ion-button (click)="cancel()">
+        <ion-icon name="close"></ion-icon>
+      </ion-button>
+    </ion-buttons>
+  </ion-toolbar>
+</ion-header>
+
+<ion-content>
+  <form [formGroup]="form" (ngSubmit)="save()">
+    <ion-card>
+      <ion-item>
+        <ion-label position="stacked">Subject</ion-label>
+        <ion-input type="text" formControlName="subject"></ion-input>
+      </ion-item>
+    </ion-card>
+    <ion-card>
+      <ion-item>
+        <ion-label position="stacked">Note</ion-label>
+        <ion-textarea type="text" formControlName="text" rows="16"></ion-textarea>
+      </ion-item>
+    </ion-card>
+  </form>
+</ion-content>
+
+<ion-footer>
+  <ion-button shape="round" type="submit" (click)="save()" [disabled]="disabled() | async">
+    <ion-spinner name="lines" *ngIf="loading$ | async"></ion-spinner>
+    <div *ngIf="!(loading$ | async)">
+      Save
+    </div>
+  </ion-button>
+</ion-footer>

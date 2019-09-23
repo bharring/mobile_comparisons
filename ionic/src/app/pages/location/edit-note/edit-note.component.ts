@@ -1,4 +1,11 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, OnInit, Input } from '@angular/core';
+import { Asset } from 'src/app/models';
+import { FormGroup, FormBuilder, Validators } from '@angular/forms';
+import { AssetService } from 'src/app/services/asset/asset.service';
+import { ModalController } from '@ionic/angular';
+import { Observable } from 'rxjs';
+import { AssetsQuery } from 'src/app/services/asset/asset.query';
+import { map, take } from 'rxjs/operators';
 
 @Component({
   selector: 'app-edit-note',
@@ -6,9 +13,48 @@ import { Component, OnInit } from '@angular/core';
   styleUrls: ['./edit-note.component.scss'],
 })
 export class EditNoteComponent implements OnInit {
+  @Input() note: Asset;
+  @Input() locationId: string;
+  form: FormGroup;
+  loading$: Observable<boolean>;
 
-  constructor() { }
+  constructor(
+    private service: AssetService,
+    private query: AssetsQuery,
+    private fb: FormBuilder,
+    private modal: ModalController,
+  ) {}
 
-  ngOnInit() {}
+  ngOnInit() {
+    this.loading$ = this.query.selectLoading();
+    this.form = this.fb.group({
+      subject: ['', [Validators.required]],
+      text: ['', [Validators.required]],
+    });
+    if (this.note) {
+      this.form.patchValue(this.note);
+    }
+  }
 
+  async save() {
+    const disabled = await this.disabled().pipe(take(1)).toPromise();
+    if (!disabled) {
+      this.service.store.setLoading(true);
+      const locationId = this.locationId;
+      this.note
+        ? await this.service.updateAsset({ ...this.note, ...this.form.value, locationId })
+        : await this.service.addAsset({ ...this.form.value, locationId, type: 'note' });
+      this.form.reset();
+      this.service.store.setLoading(false);
+      await this.modal.dismiss();
+    }
+  }
+
+  async cancel() {
+    await this.modal.dismiss();
+  }
+
+  disabled() {
+    return this.loading$.pipe(map(loading => !this.form.valid || loading));
+  }
 }

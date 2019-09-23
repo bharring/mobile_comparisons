@@ -4,7 +4,7 @@ import { LocationsQuery } from 'src/app/services/location/location.query';
 import { Subscription, Observable } from 'rxjs';
 import { Location } from 'src/app/models';
 import { ModalController } from '@ionic/angular';
-import { EditLocationComponent } from 'src/app/shared/edit-location/edit-location.component';
+import { EditLocationComponent } from '../../shared/edit-location/edit-location.component';
 
 @Component({
   selector: 'app-home',

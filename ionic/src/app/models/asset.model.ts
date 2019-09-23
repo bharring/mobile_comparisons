@@ -9,6 +9,10 @@ export interface Asset extends Base {
   geoPoint: firestore.GeoPoint; // location during recording
   // EXIF and similar data:
 
+  // test notes only:
+  subject: string;
+  text: string;
+
 }
 
 /**

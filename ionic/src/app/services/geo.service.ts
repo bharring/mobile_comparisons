@@ -21,9 +21,7 @@ export class GeoService {
     return this._geocoder;
   }
 
-  constructor(private toast: ToastController) {
-    this.getGoogleMaps().then(googleMaps => (this.googleMaps = googleMaps));
-  }
+  constructor(private toast: ToastController) {}
 
   async getCurrentPosition(): Promise<GeolocationPosition> {
     try {

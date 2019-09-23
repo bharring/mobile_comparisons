@@ -13,54 +13,56 @@
 
 <ion-content>
   <ion-card>
-    <form [formGroup]="form" (ngSubmit)="save()">
-      <ion-item>
-        <ion-label position="stacked">Name</ion-label>
-        <ion-input type="text" formControlName="name"></ion-input>
-        <ion-buttons slot="end">
-          <ion-button (click)="fillLocation()">
-            <ion-spinner name="lines" *ngIf="loading$ | async"></ion-spinner>
-            <ion-icon name="locate" *ngIf="!(loading$ | async)"></ion-icon>
-          </ion-button>
-        </ion-buttons>
-      </ion-item>
+    <ion-card-content>
+      <form [formGroup]="form" (ngSubmit)="save()">
+        <ion-item>
+          <ion-label position="stacked">Name</ion-label>
+          <ion-input type="text" formControlName="name"></ion-input>
+          <ion-buttons slot="end">
+            <ion-button (click)="fillLocation()">
+              <ion-spinner name="lines" *ngIf="loading$ | async"></ion-spinner>
+              <ion-icon name="locate" *ngIf="!(loading$ | async)"></ion-icon>
+            </ion-button>
+          </ion-buttons>
+        </ion-item>
 
-      <ion-item>
-        <ion-label position="stacked">Address</ion-label>
-        <ion-input type="text" formControlName="address1"></ion-input>
-      </ion-item>
+        <ion-item>
+          <ion-label position="stacked">Address</ion-label>
+          <ion-input type="text" formControlName="address1"></ion-input>
+        </ion-item>
 
-      <ion-item>
-        <ion-label position="stacked">Address</ion-label>
-        <ion-input type="text" formControlName="address2"></ion-input>
-      </ion-item>
+        <ion-item>
+          <ion-label position="stacked">Address</ion-label>
+          <ion-input type="text" formControlName="address2"></ion-input>
+        </ion-item>
 
-      <ion-item>
-        <ion-label position="stacked">City</ion-label>
-        <ion-input type="text" formControlName="city"></ion-input>
-      </ion-item>
+        <ion-item>
+          <ion-label position="stacked">City</ion-label>
+          <ion-input type="text" formControlName="city"></ion-input>
+        </ion-item>
 
-      <ion-item>
-        <ion-label position="stacked">Region</ion-label>
-        <ion-input type="text" formControlName="region"></ion-input>
-      </ion-item>
+        <ion-item>
+          <ion-label position="stacked">Region</ion-label>
+          <ion-input type="text" formControlName="region"></ion-input>
+        </ion-item>
 
-      <ion-item>
-        <ion-label position="stacked">Country</ion-label>
-        <ion-input type="text" formControlName="country"></ion-input>
-      </ion-item>
+        <ion-item>
+          <ion-label position="stacked">Country</ion-label>
+          <ion-input type="text" formControlName="country"></ion-input>
+        </ion-item>
 
-      <ion-item>
-        <ion-label position="stacked">Postal</ion-label>
-        <ion-input type="text" formControlName="postal"></ion-input>
-      </ion-item>
+        <ion-item>
+          <ion-label position="stacked">Postal</ion-label>
+          <ion-input type="text" formControlName="postal"></ion-input>
+        </ion-item>
 
-    </form>
+      </form>
+    </ion-card-content>
   </ion-card>
 </ion-content>
 
 <ion-footer>
-  <ion-button type="submit" (click)="save()" [disabled]="disabled() | async">
+  <ion-button shape="round" type="submit" (click)="save()" [disabled]="disabled() | async">
     <ion-spinner name="lines" *ngIf="loading$ | async"></ion-spinner>
     <div *ngIf="!(loading$ | async)">
       Save

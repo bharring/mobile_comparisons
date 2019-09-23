@@ -24,7 +24,7 @@
         <ion-col>
           <div class="ion-text-center">
             <button type="submit" style="display:none">hidden submit</button>
-            <ion-button expand="full" [disabled]="!form.valid" type="submit">
+            <ion-button shape="round" expand="full" [disabled]="!form.valid" type="submit">
               <ion-spinner *ngIf="loading"></ion-spinner>
               <div *ngIf="!loading">
                 Login

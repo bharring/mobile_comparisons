@@ -27,41 +27,43 @@
       <ion-row>
         <ion-col>
           <ion-text>
+            Address:<br />
             {{ location.address1 }}<br />
-          </ion-text>
-          <ion-text *ngIf="location.address2">
-            {{ location.address2 }}<br />
-          </ion-text>
-          <ion-text>
+            <div *ngIf="location.address2">
+              {{ location.address2 }}<br />
+            </div>
             {{ location.city }}, {{ location.region }} {{ location.postal }}<br />
             {{ location.country }}
           </ion-text>
         </ion-col>
       </ion-row>
       <ion-row>
-        <ion-col>
-          <ion-button expand="block" color="secondary" (click)="addNote()">
-            <ion-icon name="document"></ion-icon>&nbsp;&nbsp;Add Note
+        <ion-col size="4">
+          <ion-button shape="round" expand="block" color="secondary" (click)="editNote()">
+            <ion-icon name="add"></ion-icon>
+            <ion-icon name="document"></ion-icon>
           </ion-button>
         </ion-col>
-        <ion-col>
-          <ion-button expand="block" color="secondary" (click)="addPhoto()">
-            <ion-icon name="camera"></ion-icon>&nbsp;&nbsp;Add Photo
+        <ion-col size="4">
+          <ion-button shape="round" expand="block" color="secondary" (click)="addPhoto()">
+            <ion-icon name="add"></ion-icon>
+            <ion-icon name="camera"></ion-icon>
           </ion-button>
         </ion-col>
-        <ion-col>
-          <ion-button expand="block" color="secondary" (click)="addAudio()">
-            <ion-icon name="mic"></ion-icon>&nbsp;&nbsp;Add Audio
+        <ion-col size="4">
+          <ion-button shape="round" expand="block" color="secondary" (click)="addAudio()">
+            <ion-icon name="add"></ion-icon>
+            <ion-icon name="mic"></ion-icon>
           </ion-button>
         </ion-col>
       </ion-row>
-      <!-- <pre *ngIf="location$ | async as location">{{ location | json }}</pre> -->
-      <ion-list>
-        <ion-list-header>Assets</ion-list-header>
-        <ion-item *ngFor="let asset of assets$ | async">
-          <ion-label>{{ asset.path }}</ion-label>
-        </ion-item>
-      </ion-list>
+
+      <hr />
+      <ion-label class="ion-padding">Assets</ion-label>
+      <div *ngFor="let asset of assets$ | async">
+        <app-note-card *ngIf="asset.type === 'note'" [note]="asset" (click)="editNote(asset)"></app-note-card>
+      </div>
+
     </ng-container>
   </ng-template>
 </ion-content>

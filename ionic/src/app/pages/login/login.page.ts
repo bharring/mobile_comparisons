@@ -26,13 +26,12 @@ export class LoginPage implements OnInit {
       try {
         this.loading = true;
         await this.auth.signin(this.form.value.email, this.form.value.password);
-        this.form.reset();
-        this.loading = false;
       } catch (err) {
-        this.loading = false;
         console.error(err.message);
         this.error = err.message;
       }
+      this.form.reset();
+      this.loading = false;
     }
   }
 

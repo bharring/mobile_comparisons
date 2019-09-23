@@ -5,11 +5,15 @@ import { LocationService } from 'src/app/services/location/location.service';
 import { Location, Asset } from 'src/app/models';
 import { Observable, Subscription } from 'rxjs';
 import { ModalController, AlertController } from '@ionic/angular';
-import { EditLocationComponent } from 'src/app/shared/edit-location/edit-location.component';
 import { GeoService } from 'src/app/services/geo.service';
 import { filter, take } from 'rxjs/operators';
 import { AssetsQuery } from 'src/app/services/asset/asset.query';
 import { AssetService } from 'src/app/services/asset/asset.service';
+import { AddAudioComponent } from './add-audio/add-audio.component';
+import { CameraService } from 'src/app/services/camera.service';
+import { StorageService } from 'src/app/services/storage.service';
+import { EditNoteComponent } from './edit-note/edit-note.component';
+import { EditLocationComponent } from '../../shared/edit-location/edit-location.component';
 
 @Component({
   selector: 'app-location',
@@ -30,19 +34,21 @@ export class LocationPage implements OnInit, OnDestroy, AfterViewInit {
     private assetsQuery: AssetsQuery,
     private assetService: AssetService,
     private alert: AlertController,
+    private camera: CameraService,
     private geo: GeoService,
     private modal: ModalController,
     private locationsQuery: LocationsQuery,
     private locationService: LocationService,
     private route: ActivatedRoute,
     private router: Router,
+    private storage: StorageService,
   ) {}
 
   async ngOnInit() {
     this.loading$ = this.locationsQuery.selectLoading();
     this.locationSubscription = this.locationService.syncCollection().subscribe();
 
-    this.assetSubscription = this.assetService.syncCollection(this.route.snapshot.params.id).subscribe();
+    this.assetSubscription = this.assetService.syncAssetCollection(this.route.snapshot.params.id).subscribe();
     this.assets$ = this.assetsQuery.selectAll();
 
     this.locationService.store.setActive(this.route.snapshot.params.id);
@@ -73,9 +79,29 @@ export class LocationPage implements OnInit, OnDestroy, AfterViewInit {
     this.locationSubscription.unsubscribe();
   }
 
-  addNote() {}
-  addPhoto() {}
-  addAudio() {}
+  async editNote(note?: Asset) {
+    const modal = await this.modal.create({
+      component: EditNoteComponent,
+      componentProps: {
+        locationId: this.route.snapshot.params.id,
+        note,
+      },
+    });
+    await modal.present();
+  }
+  async addPhoto() {
+    const url = await this.camera.takePicture();
+    this.storage.upload(`/locations/${Date.now()}`, url);
+  }
+  async addAudio() {
+    const modal = await this.modal.create({
+      component: AddAudioComponent,
+      componentProps: {
+        locationId: this.route.snapshot.params.id,
+      },
+    });
+    await modal.present();
+  }
 
   async edit() {
     const modal = await this.modal.create({
