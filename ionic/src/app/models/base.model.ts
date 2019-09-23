@@ -1,7 +1,5 @@
-import { ID } from '@datorama/akita';
-
 export interface Base {
-  docId: ID;
+  docId: string;
   docPath?: string;
   createdAt?: any;
   updatedAt?: any;

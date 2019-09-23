@@ -21,9 +21,9 @@ export class AssetService extends CollectionService<AssetState> {
     return this.update({ ...entity, updatedAt: new Date() });
   }
 
-  syncAssetCollection(locationId?: string) {
+  syncAssetCollection() {
     return super.syncCollection(ref =>
-      ref.where('userId', '==', this.auth.user.uid).where('locationId', '==', locationId),
+      ref.where('userId', '==', this.auth.user.uid)
     );
   }
 }

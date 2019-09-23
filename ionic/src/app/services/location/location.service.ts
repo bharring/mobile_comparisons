@@ -1,9 +1,8 @@
 import { Injectable } from '@angular/core';
-import { CollectionConfig, CollectionService, WriteOptions } from 'akita-ng-fire';
+import { CollectionConfig, CollectionService } from 'akita-ng-fire';
 import { LocationState, LocationStore } from './location.store';
 import { AuthService } from '../auth/auth.service';
 import { Location } from 'src/app/models';
-import { firestore } from 'firebase/app';
 
 @Injectable({
   providedIn: 'root',
@@ -22,7 +21,7 @@ export class LocationService extends CollectionService<LocationState> {
     return this.update({ ...entity, updatedAt: new Date() });
   }
 
-  syncCollection() {
+  syncLocationCollection() {
     return super.syncCollection(ref => ref.where('userId', '==', this.auth.user.uid));
   }
 }

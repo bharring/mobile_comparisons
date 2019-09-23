@@ -21,7 +21,7 @@ export class HomePage implements OnInit, OnDestroy {
   ngOnInit(): void {
     this.loading$ = this.query.selectLoading();
     this.locations$ = this.query.selectAll();
-    this.sub = this.service.syncCollection().subscribe();
+    this.sub = this.service.syncLocationCollection().subscribe();
   }
 
   ngOnDestroy(): void {

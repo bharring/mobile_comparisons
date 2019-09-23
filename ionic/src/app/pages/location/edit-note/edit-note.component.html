@@ -4,7 +4,10 @@
       {{ note ? note.subject : 'Add Note' }}
     </ion-title>
     <ion-buttons slot="end">
-      <ion-button (click)="cancel()">
+      <ion-button color="danger" (click)="delete()" *ngIf="note">
+        <ion-icon name="trash"></ion-icon>
+      </ion-button>
+      <ion-button (click)="cancel()" *ngIf="!note">
         <ion-icon name="close"></ion-icon>
       </ion-button>
     </ion-buttons>
@@ -28,7 +31,10 @@
   </form>
 </ion-content>
 
-<ion-footer>
+<ion-footer class="ion-text-end">
+  <ion-button shape="round" color="light" (click)="cancel()">
+    Cancel
+  </ion-button>
   <ion-button shape="round" type="submit" (click)="save()" [disabled]="disabled() | async">
     <ion-spinner name="lines" *ngIf="loading$ | async"></ion-spinner>
     <div *ngIf="!(loading$ | async)">

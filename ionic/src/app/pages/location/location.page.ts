@@ -14,6 +14,7 @@ import { CameraService } from 'src/app/services/camera.service';
 import { StorageService } from 'src/app/services/storage.service';
 import { EditNoteComponent } from './edit-note/edit-note.component';
 import { EditLocationComponent } from '../../shared/edit-location/edit-location.component';
+import * as firebase from 'firebase/app';
 
 @Component({
   selector: 'app-location',
@@ -46,10 +47,12 @@ export class LocationPage implements OnInit, OnDestroy, AfterViewInit {
 
   async ngOnInit() {
     this.loading$ = this.locationsQuery.selectLoading();
-    this.locationSubscription = this.locationService.syncCollection().subscribe();
+    this.locationSubscription = this.locationService.syncLocationCollection().subscribe();
 
-    this.assetSubscription = this.assetService.syncAssetCollection(this.route.snapshot.params.id).subscribe();
-    this.assets$ = this.assetsQuery.selectAll();
+    this.assetSubscription = this.assetService.syncAssetCollection().subscribe();
+    this.assets$ = this.assetsQuery.selectAll({
+      filterBy: entity => entity.locationId === this.route.snapshot.params.id,
+    });
 
     this.locationService.store.setActive(this.route.snapshot.params.id);
     this.location$ = this.locationsQuery.selectActive() as Observable<Location>;
@@ -74,7 +77,7 @@ export class LocationPage implements OnInit, OnDestroy, AfterViewInit {
   }
 
   ngOnDestroy() {
-    this.locationService.store.removeActive(this.route.snapshot.params.id);
+    // this.locationService.store.removeActive(this.route.snapshot.params.id);
     this.assetSubscription.unsubscribe();
     this.locationSubscription.unsubscribe();
   }
@@ -121,7 +124,7 @@ export class LocationPage implements OnInit, OnDestroy, AfterViewInit {
           text: 'Yes',
           handler: async () => {
             await this.router.navigateByUrl('/home');
-            await this.locationService.remove(this.route.snapshot.params.id);
+            await this.locationService.remove(this.route.snapshot.params.id, {});
           },
         },
         { text: 'Cancel', role: 'cancel' },

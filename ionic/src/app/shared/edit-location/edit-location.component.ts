@@ -53,7 +53,7 @@ export class EditLocationComponent implements OnInit {
     try {
       this.service.store.setLoading(true);
       const addresses = await this.geo.getCurrentAddress();
-      console.log(addresses);
+      // console.log(addresses);
 
       const address: google.maps.GeocoderResult = get(
         addresses.filter(addr => addr.types.includes('route')),
@@ -61,7 +61,7 @@ export class EditLocationComponent implements OnInit {
         addresses[0],
       );
       // const address = addresses[0];
-      console.log(address);
+      // console.log(address);
 
       this.form.controls.address1.setValue(
         (this.getAddressComponent(address, 'street_number') + ' ' + this.getAddressComponent(address, 'route')).trim(),

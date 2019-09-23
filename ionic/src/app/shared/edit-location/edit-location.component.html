@@ -3,11 +3,6 @@
     <ion-title>
       {{ location ? 'Edit ' + location.name : 'Add Location' }}
     </ion-title>
-    <ion-buttons slot="end">
-      <ion-button (click)="cancel()">
-        <ion-icon name="close"></ion-icon>
-      </ion-button>
-    </ion-buttons>
   </ion-toolbar>
 </ion-header>
 
@@ -61,7 +56,10 @@
   </ion-card>
 </ion-content>
 
-<ion-footer>
+<ion-footer class="ion-text-end">
+  <ion-button shape="round" color="light" (click)="cancel()">
+    Cancel
+  </ion-button>
   <ion-button shape="round" type="submit" (click)="save()" [disabled]="disabled() | async">
     <ion-spinner name="lines" *ngIf="loading$ | async"></ion-spinner>
     <div *ngIf="!(loading$ | async)">
