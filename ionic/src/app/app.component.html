@@ -11,7 +11,7 @@
       <ion-content>
         <ion-list>
           <div *ngFor="let p of appPages">
-            <ion-menu-toggle auto-hide="false" *ngIf="p.loggedIn === (auth.loggedIn$ | async)">
+            <ion-menu-toggle auto-hide="false" *ngIf="p.loggedIn === (loggedIn$ | async)">
               <ion-item [routerDirection]="'root'" (click)="p.action()">
                 <ion-icon slot="start" [name]="p.icon"></ion-icon>
                 <ion-label>

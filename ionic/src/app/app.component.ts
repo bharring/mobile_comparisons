@@ -13,6 +13,7 @@ import { GeoService } from './services/geo.service';
   styleUrls: ['app.component.scss'],
 })
 export class AppComponent {
+  loggedIn$ = this.auth.query.select(st => st.loggedIn);
   public appPages = [
     {
       title: 'Home',

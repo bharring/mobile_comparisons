@@ -4,7 +4,6 @@ import { FormGroup, FormBuilder, Validators } from '@angular/forms';
 import { AssetService } from 'src/app/services/asset/asset.service';
 import { ModalController, AlertController } from '@ionic/angular';
 import { Observable } from 'rxjs';
-import { AssetsQuery } from 'src/app/services/asset/asset.query';
 import { map, take } from 'rxjs/operators';
 
 @Component({
@@ -20,14 +19,13 @@ export class EditNoteComponent implements OnInit {
 
   constructor(
     private alert: AlertController,
-    private service: AssetService,
-    private query: AssetsQuery,
+    private assets: AssetService,
     private fb: FormBuilder,
     private modal: ModalController,
   ) {}
 
   ngOnInit() {
-    this.loading$ = this.query.selectLoading();
+    this.loading$ = this.assets.query.selectLoading();
     this.form = this.fb.group({
       subject: ['', [Validators.required]],
       text: ['', [Validators.required]],
@@ -42,13 +40,10 @@ export class EditNoteComponent implements OnInit {
       .pipe(take(1))
       .toPromise();
     if (!disabled) {
-      this.service.store.setLoading(true);
-      const locationId = this.locationId;
       this.note
-        ? await this.service.updateAsset({ ...this.note, ...this.form.value, locationId })
-        : await this.service.addAsset({ ...this.form.value, locationId, type: 'note' });
+        ? await this.assets.updateAsset({ ...this.note, ...this.form.value })
+        : await this.assets.addAsset({ ...this.form.value, locationId: this.locationId, type: 'note' });
       this.form.reset();
-      this.service.store.setLoading(false);
       await this.modal.dismiss();
     }
   }
@@ -60,10 +55,8 @@ export class EditNoteComponent implements OnInit {
         {
           text: 'Yes',
           handler: async () => {
-            this.service.store.setLoading(true);
-            await this.service.remove(this.note.docId, {});
+            await this.assets.delete(this.note);
             this.form.reset();
-            this.service.store.setLoading(false);
             await this.modal.dismiss();
           },
         },

@@ -16,9 +16,7 @@ import { AngularFireStorageModule } from '@angular/fire/storage';
 import { AngularFireAuthModule } from '@angular/fire/auth';
 
 import { AkitaNgDevtools } from '@datorama/akita-ngdevtools';
-import { AkitaNgRouterStoreModule } from '@datorama/akita-ng-router-store';
 import { DistancePipe } from './pipes/distance.pipe';
-import { Capacitor } from '@capacitor/core';
 
 @NgModule({
   declarations: [AppComponent, DistancePipe],
@@ -32,7 +30,6 @@ import { Capacitor } from '@capacitor/core';
     AngularFireStorageModule,
     AngularFireAuthModule,
     environment.production ? [] : AkitaNgDevtools.forRoot(),
-    AkitaNgRouterStoreModule.forRoot(),
   ],
   providers: [StatusBar, SplashScreen, { provide: RouteReuseStrategy, useClass: IonicRouteStrategy }],
   bootstrap: [AppComponent],

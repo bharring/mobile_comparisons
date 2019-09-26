@@ -1,10 +1,7 @@
 import { Component, OnInit, Input } from '@angular/core';
 import { Asset } from 'src/app/models';
-import { take, map } from 'rxjs/operators';
 import { AlertController, ModalController } from '@ionic/angular';
 import { AssetService } from 'src/app/services/asset/asset.service';
-import { AssetsQuery } from 'src/app/services/asset/asset.query';
-import { FormBuilder } from '@angular/forms';
 import { StorageService } from 'src/app/services/storage.service';
 
 @Component({
@@ -17,7 +14,7 @@ export class EditPhotoComponent implements OnInit {
 
   constructor(
     private alert: AlertController,
-    private service: AssetService,
+    private assets: AssetService,
     private modal: ModalController,
     private storage: StorageService,
   ) {}
@@ -31,9 +28,7 @@ export class EditPhotoComponent implements OnInit {
         {
           text: 'Yes',
           handler: async () => {
-            this.service.store.setLoading(true);
-            await Promise.all([this.storage.delete(this.photo.path), this.service.remove(this.photo.docId, {})]);
-            this.service.store.setLoading(false);
+            await this.assets.delete(this.photo);
             await this.modal.dismiss();
           },
         },

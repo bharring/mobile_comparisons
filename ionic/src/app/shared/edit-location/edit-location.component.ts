@@ -2,13 +2,13 @@ import { Component, OnInit, Input } from '@angular/core';
 import { FormGroup, FormBuilder, Validators } from '@angular/forms';
 import { Location } from 'src/app/models';
 import { get } from 'lodash';
-import { LocationsQuery } from 'src/app/services/location/location.query';
 import { ModalController } from '@ionic/angular';
 import { LocationService } from 'src/app/services/location/location.service';
-import { Observable, of } from 'rxjs';
+import { Observable } from 'rxjs';
 import { GeoService } from 'src/app/services/geo.service';
 import { firestore } from 'firebase';
 import { map } from 'rxjs/operators';
+import { Router } from '@angular/router';
 
 @Component({
   selector: 'app-edit-location',
@@ -23,13 +23,13 @@ export class EditLocationComponent implements OnInit {
   constructor(
     private fb: FormBuilder,
     private geo: GeoService,
-    private service: LocationService,
-    private query: LocationsQuery,
+    private locations: LocationService,
     private modal: ModalController,
+    private router: Router,
   ) {}
 
   ngOnInit() {
-    this.loading$ = this.query.selectLoading();
+    this.loading$ = this.locations.query.selectLoading();
     this.form = this.fb.group({
       name: ['', [Validators.required, Validators.minLength(3)]],
       address1: ['', [Validators.required]],
@@ -45,13 +45,9 @@ export class EditLocationComponent implements OnInit {
     }
   }
 
-  getAddressComponent(address: google.maps.GeocoderResult, type: string): string {
-    return get(address.address_components.filter(addr => addr.types.includes(type)), [0, 'long_name'], '');
-  }
-
   async fillLocation() {
     try {
-      this.service.store.setLoading(true);
+      this.locations.store.setLoading(true);
       const addresses = await this.geo.getCurrentAddress();
       // console.log(addresses);
 
@@ -64,12 +60,16 @@ export class EditLocationComponent implements OnInit {
       // console.log(address);
 
       this.form.controls.address1.setValue(
-        (this.getAddressComponent(address, 'street_number') + ' ' + this.getAddressComponent(address, 'route')).trim(),
+        (
+          this.geo.getAddressComponent(address, 'street_number') +
+          ' ' +
+          this.geo.getAddressComponent(address, 'route')
+        ).trim(),
       );
-      this.form.controls.city.setValue(this.getAddressComponent(address, 'administrative_area_level_2'));
-      this.form.controls.region.setValue(this.getAddressComponent(address, 'administrative_area_level_1'));
-      this.form.controls.country.setValue(this.getAddressComponent(address, 'country'));
-      this.form.controls.postal.setValue(this.getAddressComponent(address, 'postal_code'));
+      this.form.controls.city.setValue(this.geo.getAddressComponent(address, 'administrative_area_level_2'));
+      this.form.controls.region.setValue(this.geo.getAddressComponent(address, 'administrative_area_level_1'));
+      this.form.controls.country.setValue(this.geo.getAddressComponent(address, 'country'));
+      this.form.controls.postal.setValue(this.geo.getAddressComponent(address, 'postal_code'));
 
       this.form.controls.geoPoint.setValue(
         new firestore.GeoPoint(address.geometry.location.lat(), address.geometry.location.lng()),
@@ -81,16 +81,17 @@ export class EditLocationComponent implements OnInit {
     } catch (err) {
       console.error(err.message);
     }
-    this.service.store.setLoading(false);
+    this.locations.store.setLoading(false);
   }
 
   async save() {
-    this.service.store.setLoading(true);
-    this.location
-      ? await this.service.updateLocation({ ...this.location, ...this.form.value })
-      : await this.service.addLocation(this.form.value);
+    if (this.location) {
+      await this.locations.updateLocation({ ...this.location, ...this.form.value });
+    } else {
+      const docId = await this.locations.addLocation(this.form.value);
+      await this.router.navigateByUrl(`/location/${docId}`);
+    }
     this.form.reset();
-    this.service.store.setLoading(false);
     await this.modal.dismiss();
   }
 

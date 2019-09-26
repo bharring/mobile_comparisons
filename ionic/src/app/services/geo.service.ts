@@ -2,6 +2,7 @@ import { Injectable } from '@angular/core';
 import { Plugins, GeolocationPosition } from '@capacitor/core';
 import { environment } from 'src/environments/environment';
 import { ToastController } from '@ionic/angular';
+import { get } from 'lodash';
 
 const { Geolocation } = Plugins;
 
@@ -32,6 +33,10 @@ export class GeoService {
       await toast.present();
       throw new Error(err.message);
     }
+  }
+
+  getAddressComponent(result: google.maps.GeocoderResult, type: string): string {
+    return get(result.address_components.filter(addr => addr.types.includes(type)), [0, 'long_name'], '');
   }
 
   async getCurrentAddress(): Promise<google.maps.GeocoderResult[]> {

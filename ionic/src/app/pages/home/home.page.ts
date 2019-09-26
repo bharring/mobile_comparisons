@@ -4,6 +4,7 @@ import { Observable } from 'rxjs';
 import { Location } from 'src/app/models';
 import { ModalController } from '@ionic/angular';
 import { EditLocationComponent } from '../../shared/edit-location/edit-location.component';
+import { LocationService } from 'src/app/services/location/location.service';
 
 @Component({
   selector: 'app-home',
@@ -14,11 +15,11 @@ export class HomePage implements OnInit {
   loading$: Observable<boolean>;
   locations$: Observable<Location[]>;
 
-  constructor(private query: LocationsQuery, private modal: ModalController) {}
+  constructor(private modal: ModalController, private locations: LocationService) {}
 
   ngOnInit(): void {
-    this.loading$ = this.query.selectLoading();
-    this.locations$ = this.query.selectAll();
+    this.loading$ = this.locations.query.selectLoading();
+    this.locations$ = this.locations.query.selectAll();
   }
 
   async addLocation() {

@@ -35,8 +35,9 @@ export class SignUpPage implements OnInit {
     if (!this.disabled()) {
       try {
         this.loading = true;
-        await this.auth.signup(this.form.value.email, this.form.value.password);
-        await this.auth.update({
+        await this.auth.createUser(this.form.value.email, this.form.value.password);
+        await this.auth.updateProfile({
+          email: this.form.value.email,
           displayName: this.form.value.displayName,
           organizationName: this.form.value.organizationName,
         });

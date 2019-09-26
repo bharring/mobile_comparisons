@@ -1,13 +1,11 @@
 import { Component, OnInit, ViewChild, ElementRef, AfterViewInit } from '@angular/core';
 import { ActivatedRoute, Router } from '@angular/router';
-import { LocationsQuery } from 'src/app/services/location/location.query';
 import { LocationService } from 'src/app/services/location/location.service';
 import { Location, Asset } from 'src/app/models';
 import { Observable } from 'rxjs';
 import { ModalController, AlertController } from '@ionic/angular';
 import { GeoService } from 'src/app/services/geo.service';
 import { filter, take, finalize } from 'rxjs/operators';
-import { AssetsQuery } from 'src/app/services/asset/asset.query';
 import { AssetService } from 'src/app/services/asset/asset.service';
 import { AddAudioComponent } from './add-audio/add-audio.component';
 import { CameraService } from 'src/app/services/camera.service';
@@ -32,23 +30,23 @@ export class LocationPage implements OnInit, AfterViewInit {
 
   constructor(
     private auth: AuthService,
-    private assetsQuery: AssetsQuery,
-    private assetService: AssetService,
+    private assets: AssetService,
     private alert: AlertController,
     private camera: CameraService,
     private geo: GeoService,
     private modal: ModalController,
-    private locationsQuery: LocationsQuery,
-    private locationService: LocationService,
+    private locations: LocationService,
     private route: ActivatedRoute,
     private router: Router,
     private storage: StorageService,
   ) {}
 
   async ngOnInit() {
-    this.loading$ = this.locationsQuery.selectLoading();
-    this.assets$ = this.assetsQuery.selectAll();
-    this.location$ = this.locationsQuery.selectActive() as Observable<Location>;
+    this.loading$ = this.locations.query.selectLoading();
+    this.assets$ = this.assets.query.selectAll({
+      filterBy: entity => entity.locationId === this.route.snapshot.params.id,
+    });
+    this.location$ = this.locations.query.selectEntity(this.route.snapshot.params.id);
   }
 
   ngAfterViewInit() {
@@ -92,7 +90,9 @@ export class LocationPage implements OnInit, AfterViewInit {
   }
   async addPhoto() {
     const image = await this.camera.takePicture();
-    const path = `/users/${this.auth.user.uid}/locations/${this.route.snapshot.params.id}/${Date.now()}.jpeg`;
+    const path = `/users/${this.auth.userId}/locations/${
+      this.route.snapshot.params.id
+    }/${Date.now()}.jpeg`;
     const percentageChanges = this.storage.upload(path, image.base64String);
     percentageChanges
       .pipe(
@@ -101,7 +101,7 @@ export class LocationPage implements OnInit, AfterViewInit {
             .getDownloadURL(path)
             .pipe(take(1))
             .toPromise();
-          this.assetService.addAsset({
+          this.assets.addAsset({
             type: `image/${image.format}`,
             url,
             path,
@@ -125,7 +125,7 @@ export class LocationPage implements OnInit, AfterViewInit {
     const modal = await this.modal.create({
       component: EditLocationComponent,
       componentProps: {
-        location: this.locationsQuery.getActive(),
+        location: this.locations.query.getEntity(this.route.snapshot.params.id),
       },
     });
     await modal.present();
@@ -138,9 +138,10 @@ export class LocationPage implements OnInit, AfterViewInit {
         {
           text: 'Yes',
           handler: async () => {
+            await this.locations.remove(this.route.snapshot.params.id);
+            const assets = await this.assets$.pipe(take(1)).toPromise();
+            await this.assets.delete(assets);
             await this.router.navigateByUrl('/home');
-            await this.locationService.remove(this.route.snapshot.params.id, {});
-            await this.assetService.removeAssetsForLocation(this.assets$);
           },
         },
         { text: 'Cancel', role: 'cancel' },

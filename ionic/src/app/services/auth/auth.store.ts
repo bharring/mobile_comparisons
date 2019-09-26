@@ -1,14 +1,17 @@
 import { Injectable } from '@angular/core';
-import { Store, StoreConfig } from '@datorama/akita';
-import { FireAuthState } from 'akita-ng-fire';
+import { StoreConfig, Store } from '@datorama/akita';
 import { Profile } from '../../models';
 
-export interface AuthState extends FireAuthState<Profile> {}
+export interface AuthState {
+  profile?: Profile;
+  userId?: string;
+  loggedIn: boolean;
+}
 
 @Injectable({ providedIn: 'root' })
 @StoreConfig({ name: 'auth', idKey: 'docId' })
 export class AuthStore extends Store<AuthState> {
   constructor() {
-    super({});
+    super({ loggedIn: false });
   }
 }

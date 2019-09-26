@@ -1,7 +1,6 @@
+import { Injectable } from '@angular/core';
 import { EntityState, StoreConfig, EntityStore } from '@datorama/akita';
 import { Asset } from '../../models';
-
-import { Injectable } from '@angular/core';
 
 export interface AssetState extends EntityState<Asset> {}
 

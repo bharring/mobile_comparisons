@@ -25,7 +25,7 @@ export class LoginPage implements OnInit {
     if (!this.disabled()) {
       try {
         this.loading = true;
-        await this.auth.signin(this.form.value.email, this.form.value.password);
+        await this.auth.login(this.form.value.email, this.form.value.password);
       } catch (err) {
         console.error(err.message);
         this.error = err.message;
