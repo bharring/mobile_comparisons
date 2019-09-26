@@ -64,6 +64,27 @@ export class LocationPage implements OnInit, AfterViewInit {
           this.googleMap = new mapsApi.Map(this.mapElement.nativeElement, { center: position, zoom: 17 });
           const marker = new mapsApi.Marker({ position, map: this.googleMap });
           // TODO add markers for other assets
+          this.assets.query
+            .getAll({
+              filterBy: entity => entity.locationId === this.route.snapshot.params.id,
+            })
+            .map(asset => {
+              const m = new mapsApi.Marker({
+                position: new mapsApi.LatLng(asset.geoPoint.latitude, asset.geoPoint.longitude),
+                map: this.googleMap,
+                label: asset.type === 'note' ? 'N' : asset.type.startsWith('image') ? 'I' : 'A',
+              });
+              m.addListener('click', () => {
+                if (asset.type === 'note') {
+                  return this.editNote(asset);
+                } else if (asset.type.startsWith('image')) {
+                  return this.editPhoto(asset);
+                } else if (asset.type === 'note') {
+                  return this.editAudio(asset);
+                }
+              });
+              return m;
+            });
         }
       });
   }
@@ -90,9 +111,7 @@ export class LocationPage implements OnInit, AfterViewInit {
   }
   async addPhoto() {
     const image = await this.camera.takePicture();
-    const path = `/users/${this.auth.userId}/locations/${
-      this.route.snapshot.params.id
-    }/${Date.now()}.jpeg`;
+    const path = `/users/${this.auth.userId}/locations/${this.route.snapshot.params.id}/${Date.now()}.jpeg`;
     const percentageChanges = this.storage.upload(path, image.base64String);
     percentageChanges
       .pipe(
@@ -111,11 +130,12 @@ export class LocationPage implements OnInit, AfterViewInit {
       )
       .subscribe();
   }
-  async addAudio() {
+  async editAudio(asset: Asset) {
     const modal = await this.modal.create({
       component: AddAudioComponent,
       componentProps: {
         locationId: this.route.snapshot.params.id,
+        asset,
       },
     });
     await modal.present();
